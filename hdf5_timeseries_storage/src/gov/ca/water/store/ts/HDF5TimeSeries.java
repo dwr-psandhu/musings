@@ -58,6 +58,7 @@ public class HDF5TimeSeries {
 		ScalarDS dataset = (ScalarDS) hObject;
 		double [] values = (double[]) dataset.getData();
 		tsc.values=values;
+		tsc.numberValues = values.length;
 		h5file.close();
 		return tsc;
 	}

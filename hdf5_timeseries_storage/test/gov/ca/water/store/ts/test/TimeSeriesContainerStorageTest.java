@@ -29,10 +29,13 @@ public class TimeSeriesContainerStorageTest {
 		HDF5TimeSeries storer = new HDF5TimeSeries();
 		storer.storeTimeSeries(tsc, "test/test1.hdf5", true);
 		//
+		HDF5TimeSeries hdf5reader = new HDF5TimeSeries();
 		int niterations=100;
+		System.out.println("Reading 15min data of length "+tsc.numberValues+" "+ niterations + " times");
 		long ti=System.currentTimeMillis();
 		for(int i=0; i < niterations; i++){
-			storer.readTimeSeries("test/test1.hdf5", "/FILL+CHAN/RSAC054/STAGE/15/DWR-DMS-201203_NAVD/");
+			TimeSeriesContainer hdf5ts = hdf5reader.readTimeSeries("test/test1.hdf5", "/FILL+CHAN/RSAC054/STAGE/15/DWR-DMS-201203_NAVD/");
+			assert hdf5ts.numberValues == tsc.numberValues;
 		}
 		System.out.println("Average time to read HDF5: " + (1.*(System.currentTimeMillis()-ti))/niterations);
 
@@ -41,7 +44,8 @@ public class TimeSeriesContainerStorageTest {
 		for(int i=0; i < niterations; i++){
 			dss = HecDss.open("test/test1.dss");
 			dss.setTimeWindow("01JAN1990 0000", "31DEC2010 2400");
-			tsc = (TimeSeriesContainer) dss.get(pathname);
+			TimeSeriesContainer dssts = (TimeSeriesContainer) dss.get(pathname);
+			assert dssts.numberValues == tsc.numberValues;
 			dss.close();
 		}
 		System.out.println("Average time to read DSS: " + (1.*(System.currentTimeMillis()-ti))/niterations);
